@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Search</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #FAE6FA;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            padding: 6px;
+            width: 300px;
+        }
+
+        button {
+            padding: 6px 12px;
+            background-color: #3377FF;
+            color: white;
+            border: none;
+        }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 60%;
+        }
+
+        th, td {
+            border: 2px solid black;
+            padding: 10px;
+            background-color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>Search for Users</h1>
+
+<form method="get" action="{% url 'search_users' %}">
+    <input type="text" name="q" placeholder="Search by username" value="{{ query }}">
+    <button type="submit">Search</button>
+</form>
+
+{% if results %}
+    <h3>Search Results:</h3>
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>View Profile</th>
+        </tr>
+        {% for profile in results %}
+        <tr>
+            <td>{{ profile.username }}</td>
+            <td>{{ profile.email }}</td>
+            <td><a href="{% url 'view_profile' profile.username %}">View</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+{% elif query %}
+    <p>No users found for "{{ query }}"</p>
+{% endif %}
+<br>
+<form action="{% url 'profile' %}" method="get">
+    <button type="submit" style="background-color: #dc3545;">Back to Profile</button>
+</form>
+</body>
+</html>

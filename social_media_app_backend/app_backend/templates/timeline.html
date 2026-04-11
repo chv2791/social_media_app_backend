@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Timeline</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #FAE6FA;
+            padding: 20px;
+            text-align: center;
+        }
+        .post-box, .post {
+            background: white;
+            border: 2px solid black;
+            padding: 15px;
+            margin: 20px auto;
+            width: 50%;
+            text-align: left;
+        }
+        .post img, .post video {
+            max-width: 100%;
+            margin-top: 10px;
+        }
+        .bookmark-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .bookmark-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Share Your Post</h1>
+
+   <form method="post" enctype="multipart/form-data"> 
+        {% csrf_token %} 
+          {{ form.as_p }} 
+               <button type="submit">Post</button> 
+   </form> 
+
+    <button onclick="window.location.href='{% url 'profile' %}'" style="background-color: #dc3545; color:white; padding:8px 12px; border:none; border-radius:5px;"> 
+      Back to Profile </button>
+
+    <h2>Timeline</h2>
+
+    {% for post in posts %}
+        <div class="post">
+            <strong>{{ post.user.username }}</strong> <br>
+            <small>{{ post.created_at }}</small><br><br>
+            <p>{{ post.content }}</p>
+
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="Image">
+            {% endif %}
+            {% if post.video %}
+                <video controls>
+                    <source src="{{ post.video.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            {% endif %}
+
+            <!-- Save/Unsave Button -->
+            {% if user in post.saved_by.all %}
+                <form action="{% url 'unsave_post' post.id %}" method="post" style="margin-top: 10px;">
+                    {% csrf_token %}
+                    <button type="submit" class="bookmark-btn">Unsave</button>
+                </form>
+            {% else %}
+                <form action="{% url 'save_post' post.id %}" method="post" style="margin-top: 10px;">
+                    {% csrf_token %}
+                    <button type="submit" class="bookmark-btn">Save</button>
+                </form>
+            {% endif %}
+
+        <!-- Delete Button -->
+            {% if user == post.user %}
+                <form action="{% url 'delete_post' post.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-btn">Delete</button>
+                </form>
+            {% endif %}
+
+        </div>
+    {% empty %}
+        <p>No posts yet.</p>
+    {% endfor %}
+
+</body>
+</html>

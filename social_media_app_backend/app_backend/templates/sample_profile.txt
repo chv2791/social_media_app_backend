@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Profile</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #FAE6FA;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 50%;
+            border: 2px solid black;
+        }
+        th, td {
+            border: 2px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px;
+            vertical-align: middle;
+        }
+
+        th {
+            text-align: left;
+            padding-bottom: 10px;
+            font-weight: bold;
+            background-color: #FFFFFF;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="file"],
+        input[type="date"],
+        textarea {
+            padding: 6px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .edit-btn {
+            background: #28a745;
+        }
+
+        .edit-btn:hover {
+            background: #218838;
+        }
+
+        .profile-picture img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="form-box">
+    <h2>Update Profile</h2>
+    <form method="post" enctype="multipart/form-data" id="profileForm">
+        {% csrf_token %}
+        
+        <table>
+            <tr>
+                <th>User:</th>
+                <td><input type="text" value="{{ request.user.username }}" readonly></td>
+            </tr>
+            <tr>
+                <th>Username:</th>
+                <td><input type="text" value="{{ profile.username }}" readonly></td>
+            </tr>
+            <tr>
+                <th>Profile Picture:</th>
+                <td class="profile-picture">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" width="100">
+                    {% else %}
+                        <img src="/media/default.jpg" alt="Default Profile Picture" width="100">
+                    {% endif %}
+                    <br>
+                    {{ form.profile_picture }}
+                </td>
+            </tr>
+            <tr>
+                <th>Email ID:</th>
+                <td><input type="text" value="{{ profile.email }}" readonly></td>
+            </tr>
+            <tr>
+                <th>Bio:</th>
+                <td>{{ form.bio }}</td>
+            </tr>
+
+            <tr>
+                <th>Birth Date:</th>
+                <td>{{ form.birth_date }}</td>
+            </tr>
+        </table>
+
+        <button type="submit">Save</button>
+    </form>
+</div>
+
+<script>
+    // Function to update the profile picture preview dynamically
+    const profilePictureInput = document.querySelector('input[name="profile_picture"]');
+    if (profilePictureInput) {
+        profilePictureInput.addEventListener('change', function(event) {
+            const imgPreview = document.querySelector('.profile-picture img');
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imgPreview.src = e.target.result;  // Set the image preview to the selected file
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

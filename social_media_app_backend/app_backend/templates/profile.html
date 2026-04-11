@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Profile</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #FAE6FA;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form-box {
+            width: 60%;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 100%;
+            border: 2px solid black;
+        }
+
+        th, td {
+            border: 2px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        td {
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #FFFFFF;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="file"],
+        input[type="date"],
+        textarea {
+            padding: 6px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .buttons-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .buttons-row form {
+            margin: 0;
+        }
+
+        button {
+            padding: 10px 16px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            background: #007BFF;
+        }
+
+        .btn-save:hover {
+            background: #0056b3;
+        }
+
+        .btn-logout {
+            background: #dc3545;
+        }
+
+        .btn-logout:hover {
+            background: #c82333;
+        }
+
+        .profile-picture img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-box">
+    <h2>Update Profile</h2>
+    <form method="post" enctype="multipart/form-data" id="profileForm">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <th>User:</th>
+                <td>{{ form.user }}</td>
+            </tr>
+            <tr>
+                <th>Username:</th>
+                <td>{{ form.username }}</td>
+            </tr>
+            <tr>
+                <th>Profile Picture:</th>
+                <td class="profile-picture">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" width="100">
+                    {% else %}
+                        <img src="/media/default.jpg" alt="Default Profile Picture" width="100">
+                    {% endif %}
+                    <br>
+                    {{ form.profile_picture }}
+                </td>
+            </tr>
+            <tr>
+                <th>Email ID:</th>
+                <td>{{ form.email }}</td>
+            </tr>
+            <tr>
+                <th>Birth Date:</th>
+                <td>{{ form.birth_date }}</td>
+            </tr>
+        </table>
+
+        <!-- All buttons aligned right -->
+        <div class="buttons-row">
+            <button type="submit" class="btn-save">Save</button>
+        </div>
+    </form>
+
+    <div class="buttons-row">
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+
+        <form action="{% url 'search_users' %}" method="get">
+            <button type="submit" class="btn-save">Search Users</button>
+        </form>
+
+       <form action="{% url 'timeline' %}" method="get">
+          <button type="submit" class="btn-save">Post an Update</button>
+       </form>
+    </div>
+</div>
+
+<script>
+    // Live image preview
+    const profilePictureInput = document.querySelector('input[name="profile_picture"]');
+    if (profilePictureInput) {
+        profilePictureInput.addEventListener('change', function(event) {
+            const imgPreview = document.querySelector('.profile-picture img');
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imgPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
